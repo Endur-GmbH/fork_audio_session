@@ -73,6 +73,9 @@ class AndroidAudioManager {
 
   Future<bool> requestAudioFocus(AndroidAudioFocusRequest focusRequest) async {
     _onAudioFocusChanged = focusRequest.onAudioFocusChanged;
+	if (focusRequest.gainType == AndroidAudioFocusGainType.none) {
+      return true;
+    }
     return (await _channel
         .invokeMethod<bool>('requestAudioFocus', [focusRequest.toJson()]))!;
   }
@@ -555,6 +558,7 @@ class AndroidAudioUsage {
 }
 
 class AndroidAudioFocusGainType {
+  static const none = AndroidAudioFocusGainType._(0);
   static const gain = AndroidAudioFocusGainType._(1);
   static const gainTransient = AndroidAudioFocusGainType._(2);
   static const gainTransientMayDuck = AndroidAudioFocusGainType._(3);
@@ -562,6 +566,7 @@ class AndroidAudioFocusGainType {
   /// Requires API level 19
   static const gainTransientExclusive = AndroidAudioFocusGainType._(4);
   static const values = {
+	0: none,
     1: gain,
     2: gainTransient,
     3: gainTransientMayDuck,
